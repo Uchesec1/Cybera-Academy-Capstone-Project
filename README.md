@@ -1,4 +1,4 @@
-# Cybera-Academy-Captone-Project
+# Cybera-Academy-Capstone-Project
 # # SSH Brute Force Investigation
 
 This is my capstone project for my cybersecurity course. I was given three files from a compromised server (a packet capture, a Linux auth log and a Windows event export) and had to work out what the attacker did, when they did it, and what the company should do next.
