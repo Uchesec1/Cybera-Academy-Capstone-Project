@@ -1,5 +1,6 @@
-# Cybera-Academy-Capstone-Project
-# # SSH Brute Force Investigation
+# SSH Brute Force Investigation
+
+Cybera Academy Cybersecurity Foundation Programme, Month 1 capstone (lab exercise).
 
 This is my capstone project for my cybersecurity course. I was given three files from a compromised server (a packet capture, a Linux auth log and a Windows event export) and had to work out what the attacker did, when they did it, and what the company should do next.
 
@@ -13,7 +14,7 @@ The attacker at 10.0.2.66 scanned the server at 10.0.2.20, found SSH open, and g
 - `capstone-auth.log` for the SSH logs from server01
 - `capstone-windows-events.csv` for the Windows security events
 
-I used Wireshark for the capture and just read through the logs and CSV directly.
+I used Wireshark to analyse the packet capture, and I searched the logs and the CSV with grep in Kali Linux.
 
 ## What I found
 
@@ -27,14 +28,14 @@ I used Wireshark for the capture and just read through the logs and CSV directly
 
 ## Timeline
 
-| Time (Oct 6) | What happened |
-| --- | --- |
+| Time (Oct 6)     | What happened                             |
+|------------------|-------------------------------------------|
 | Start of capture | SYN scan finds ports 22, 80 and 3389 open |
-| 10:14:00 | First failed SSH login for grace |
-| 10:16:16 | Last of 40 failed attempts |
-| 10:16:20 | Successful login |
-| 10:16:51 | /etc/shadow read with sudo |
-| 10:17:11 | backupsvc created with UID 0 |
+| 10:14:00         | First failed SSH login for grace          |
+| 10:16:16         | Last of 40 failed attempts                |
+| 10:16:20         | Successful login                          |
+| 10:16:51         | /etc/shadow read with sudo                |
+| 10:17:11         | backupsvc created with UID 0              |
 
 ## Kill chain
 
@@ -48,13 +49,20 @@ I mapped it to reconnaissance (the scan), exploitation (the brute force and logi
 
 The most urgent job is disabling `backupsvc`. It does not depend on grace's password, so resetting her password does nothing to remove the attacker. After that, reset any credentials that could have been exposed and check the server for other changes.
 
+## How I worked
+
+I did the investigation myself in Kali Linux and Wireshark.
+## What I learned
+
+- A burst of failed logins that ends in one success is the signature of a brute-force attack.
+- Attackers often create a hidden account so they can keep access even if the first password is changed.
+- Checking the same IP across several logs is how you show it was one attacker.
+
 ## Repo layout
 
 ```
 README.md
-report/        the full write up
-evidence/      the three evidence files
-screenshots/   Wireshark and log screenshots
+Screenshots/   Wireshark and log screenshots
 ```
 
 All the data is from a lab exercise, so none of these IPs or accounts are real.
