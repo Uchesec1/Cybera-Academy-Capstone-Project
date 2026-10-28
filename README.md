@@ -20,11 +20,26 @@ I used Wireshark to analyse the packet capture, and I searched the logs and the 
 
 **The scan.** Filtering on `tcp.flags.syn==1` shows 10.0.2.66 hitting one machine across a long list of ports in about a second. Filtering on `tcp.flags.syn==1 && tcp.flags.ack==1` shows only three replied: 22 (SSH), 80 (HTTP) and 3389 (RDP).
 
+![SYN packets from one machine to many ports](Screenshots/01-syn-scan.png)
+
+![Only ports 22, 80 and 3389 replied](Screenshots/02-open-ports.png)
+
+
 **The brute force.** The auth log has 40 failed password lines for `grace`, all from 10.0.2.66, one every 2 to 5 seconds from 10:14:00 to 10:16:16. That rhythm looks like a tool, not a person. Four seconds after the last failure there is an `Accepted password for grace from 10.0.2.66` at 10:16:20.
+
+![Failed SSH logins for grace, with the count of 40](Screenshots/03-failed-logins.png)
+
+![The successful login at 10:16:20](Screenshots/04-accepted-login.png)
 
 **Same attacker everywhere.** The same IP shows up in the pcap, the auth log and the Windows events, so one attacker did the scan and the login attempts.
 
+![Windows events matching the Linux log](Screenshots/07-windows-events.png)
+
 **After the login.** At 10:16:51 `grace` used `sudo` to read `/etc/shadow`, which gives the attacker password hashes to crack offline. At 10:17:11 a new account `backupsvc` was created with UID 0, which is root. The Windows log backs this up with failed logons (4625), the successful logon (4624), the account creation (4720) and the Administrators group change (4732). The timestamps between the Linux and Windows logs are a few seconds apart.
+
+![sudo reading /etc/shadow](Screenshots/05-shadow-read.png)
+
+![New account backupsvc created with UID 0](Screenshots/06-backdoor-account.png)
 
 ## Timeline
 
